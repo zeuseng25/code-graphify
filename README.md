@@ -2,6 +2,8 @@
 
 Spring Boot application.
 
+> **Türkçe kurulum rehberi:** projeyi indirip WildFly'a deploy etmeyi ve kullanmaya başlamayı adım adım anlatan [KURULUM.md](KURULUM.md).
+
 ## Requirements
 
 - JDK 25 (macOS/Homebrew: `export JAVA_HOME=/opt/homebrew/opt/openjdk@25`; the build fails fast on older JDKs)
