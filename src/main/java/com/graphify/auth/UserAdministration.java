@@ -1,5 +1,6 @@
 package com.graphify.auth;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.exception.ConflictException;
 import com.graphify.common.exception.InvalidRequestException;
@@ -57,7 +58,7 @@ public class UserAdministration {
                 }
                 AppUser created = users.create(entry.username(), UserSource.LDAP, entry.displayName(), entry.email(),
                         role, actor);
-                auditLog.record(actor, "USER_REGISTERED", created.username(), role.name());
+                auditLog.record(actor, AuditAction.USER_REGISTERED, created.username(), role.name());
                 return created;
             });
         } catch (DataIntegrityViolationException e) {
@@ -79,7 +80,7 @@ public class UserAdministration {
             requireAnotherActiveAdmin(locked, user);
         }
         users.setRole(userId, role, actor);
-        auditLog.record(actor, "USER_ROLE_CHANGED", user.username(), user.role() + " -> " + role);
+        auditLog.record(actor, AuditAction.USER_ROLE_CHANGED, user.username(), user.role() + " -> " + role);
         return find(userId);
     }
 
@@ -104,7 +105,7 @@ public class UserAdministration {
         if (user.source() == UserSource.LOCAL) {
             accounts.setEnabled(user.username(), active);
         }
-        auditLog.record(actor, "USER_ACTIVE_CHANGED", user.username(), active ? "activated" : "deactivated");
+        auditLog.record(actor, AuditAction.USER_ACTIVE_CHANGED, user.username(), active ? "activated" : "deactivated");
         return find(userId);
     }
 

@@ -1,5 +1,6 @@
 package com.graphify.auth;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.exception.ConflictException;
 import com.graphify.common.exception.InvalidRequestException;
@@ -94,7 +95,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(Authentication authentication, HttpServletRequest request) {
-        auditLog.record(authentication.getName(), "LOGOUT", authentication.getName(), null);
+        auditLog.record(authentication.getName(), AuditAction.LOGOUT, authentication.getName(), null);
         SecurityContextHolder.clearContext();
         HttpSession session = request.getSession(false);
         if (session != null) {

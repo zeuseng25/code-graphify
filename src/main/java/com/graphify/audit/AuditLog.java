@@ -17,8 +17,8 @@ public class AuditLog {
         this.jdbc = jdbc;
     }
 
-    public void record(String actor, String action, String target, String details) {
+    public void record(String actor, AuditAction action, String target, String details) {
         jdbc.update("INSERT INTO audit_log (actor, action, target, details) VALUES (?, ?, ?, ?)",
-                actor, action, target, details == null ? null : Utf8.truncateToBytes(details, DETAILS_MAX_BYTES));
+                actor, action.name(), target, details == null ? null : Utf8.truncateToBytes(details, DETAILS_MAX_BYTES));
     }
 }

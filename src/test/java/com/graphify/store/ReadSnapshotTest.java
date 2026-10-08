@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.graphify.OracleIntegrationTest;
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,8 @@ import org.springframework.dao.DataAccessException;
 
 class ReadSnapshotTest extends OracleIntegrationTest {
 
-    private static final String ACTION = "SNAPSHOT_TEST";
+    /** This test's audit rows are told apart by their actor. */
+    private static final String ACTOR = "snapshot-test";
 
     @Autowired
     ReadSnapshot snapshot;
@@ -22,11 +24,11 @@ class ReadSnapshotTest extends OracleIntegrationTest {
 
     @AfterEach
     void cleanUp() {
-        jdbc.update("DELETE FROM audit_log WHERE action = ?", ACTION);
+        jdbc.update("DELETE FROM audit_log WHERE actor = ?", ACTOR);
     }
 
     private long count() {
-        return jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE action = ?", Long.class, ACTION);
+        return jdbc.queryForObject("SELECT COUNT(*) FROM audit_log WHERE actor = ?", Long.class, ACTOR);
     }
 
     @Test
@@ -41,7 +43,8 @@ class ReadSnapshotTest extends OracleIntegrationTest {
     void everyQuerySeesTheMomentTheSnapshotStarted() throws Exception {
         long[] seen = snapshot.read(() -> {
             long first = count();
-            Thread writer = new Thread(() -> auditLog.record("tester", ACTION, "target", "committed meanwhile"));
+            Thread writer = new Thread(
+                    () -> auditLog.record(ACTOR, AuditAction.SETTING_UPDATED, "target", "committed meanwhile"));
             writer.start();
             try {
                 writer.join();

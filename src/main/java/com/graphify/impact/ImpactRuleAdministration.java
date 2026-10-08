@@ -1,5 +1,6 @@
 package com.graphify.impact;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.exception.ConflictException;
 import com.graphify.common.exception.InvalidRequestException;
@@ -70,7 +71,7 @@ public class ImpactRuleAdministration {
         } catch (DuplicateKeyException e) {
             throw new ConflictException("Annotation " + valid.annotationFqn() + " is already listed");
         }
-        auditLog.record(actor, "ENTRY_POINT_ANNOTATION_CREATED", valid.annotationFqn(), valid.label());
+        auditLog.record(actor, AuditAction.ENTRY_POINT_ANNOTATION_CREATED, valid.annotationFqn(), valid.label());
         return annotation(keys.getKey().longValue());
     }
 
@@ -84,7 +85,7 @@ public class ImpactRuleAdministration {
         } catch (DuplicateKeyException e) {
             throw new ConflictException("Annotation " + valid.annotationFqn() + " is already listed");
         }
-        auditLog.record(actor, "ENTRY_POINT_ANNOTATION_UPDATED", valid.annotationFqn(),
+        auditLog.record(actor, AuditAction.ENTRY_POINT_ANNOTATION_UPDATED, valid.annotationFqn(),
                 "label=" + valid.label() + ", enabled=" + valid.enabled());
         return annotation(id);
     }
@@ -93,7 +94,7 @@ public class ImpactRuleAdministration {
     public void delete(long id, String actor) {
         EntryPointAnnotation current = annotation(id);
         jdbc.update("DELETE FROM entry_point_annotation WHERE id = ?", id);
-        auditLog.record(actor, "ENTRY_POINT_ANNOTATION_DELETED", current.annotationFqn(), null);
+        auditLog.record(actor, AuditAction.ENTRY_POINT_ANNOTATION_DELETED, current.annotationFqn(), null);
     }
 
     public List<ImpactRule> rules() {
@@ -110,7 +111,7 @@ public class ImpactRuleAdministration {
         if (updated == 0) {
             throw new NotFoundException("No impact rule for " + kind);
         }
-        auditLog.record(actor, "IMPACT_RULE_UPDATED", kind.name(),
+        auditLog.record(actor, AuditAction.IMPACT_RULE_UPDATED, kind.name(),
                 "propagates=" + change.propagates() + ", shownAtLevel1=" + change.shownAtLevel1());
         return rules.rules().get(kind);
     }

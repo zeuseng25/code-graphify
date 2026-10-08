@@ -21,16 +21,20 @@ public class AuditQueries {
         this.jdbc = jdbc;
     }
 
-    public Page<AuditEntry> list(String actor, String action, Instant from, Instant to, Paging paging) {
+    /**
+     * Entries newest first. {@code actor} matches any part of the name, ignoring case ("ali" finds "ali.yilmaz");
+     * the LIKE wildcards {@code %} and {@code _} in it are matched literally.
+     */
+    public Page<AuditEntry> list(String actor, AuditAction action, Instant from, Instant to, Paging paging) {
         StringBuilder where = new StringBuilder(" WHERE 1 = 1");
         List<Object> args = new ArrayList<>();
         if (actor != null && !actor.isBlank()) {
-            where.append(" AND UPPER(actor) = ?");
-            args.add(actor.strip().toUpperCase(Locale.ROOT));
+            where.append(" AND UPPER(actor) LIKE ? ESCAPE '\\'");
+            args.add("%" + escapeLike(actor.strip().toUpperCase(Locale.ROOT)) + "%");
         }
-        if (action != null && !action.isBlank()) {
-            where.append(" AND UPPER(action) = ?");
-            args.add(action.strip().toUpperCase(Locale.ROOT));
+        if (action != null) {
+            where.append(" AND action = ?");
+            args.add(action.name());
         }
         if (from != null) {
             where.append(" AND at >= ?");
@@ -51,5 +55,10 @@ public class AuditQueries {
                 }, pageArgs.toArray());
         Long total = jdbc.queryForObject("SELECT COUNT(*) FROM audit_log" + where, Long.class, args.toArray());
         return new Page<>(items, paging.page(), paging.size(), total == null ? 0 : total);
+    }
+
+    /** Escapes LIKE's wildcards and the escape character itself ({@code \\}). */
+    private static String escapeLike(String value) {
+        return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 }

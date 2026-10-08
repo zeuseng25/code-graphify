@@ -1,5 +1,6 @@
 package com.graphify.settings;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.util.Utf8;
 import java.time.Duration;
@@ -20,7 +21,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 @Service
 public class AppSettings {
 
-    static final String UPDATED_ACTION = "SETTING_UPDATED";
 
     /** Width of {@code app_setting.setting_value} in V1__core_schema.sql. */
     static final int VALUE_BYTES = 4000;
@@ -90,7 +90,7 @@ public class AppSettings {
         Setting current = find(key);
         String value = checkValue(key, rawValue);
         repository.updateValue(key, value, actor);
-        auditLog.record(actor, UPDATED_ACTION, key, current.value() + " -> " + value);
+        auditLog.record(actor, AuditAction.SETTING_UPDATED, key, current.value() + " -> " + value);
         afterCommit(() -> {
             cache = null;
             events.publishEvent(new SettingChangedEvent(key));

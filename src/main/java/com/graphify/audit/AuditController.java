@@ -3,8 +3,11 @@ package com.graphify.audit;
 import com.graphify.api.Page;
 import com.graphify.api.PagingResolver;
 import com.graphify.common.exception.InvalidRequestException;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,10 +28,20 @@ public class AuditController {
 
     @GetMapping
     public Page<AuditEntry> list(@RequestParam(required = false) String actor,
-            @RequestParam(required = false) String action, @RequestParam(required = false) String from,
-            @RequestParam(required = false) String to, @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
-        return queries.list(actor, action, instant("from", from), instant("to", to), paging.resolve(page, size));
+            @Parameter(schema = @Schema(implementation = AuditAction.class)) @RequestParam(required = false)
+            String action, @RequestParam(required = false) String from, @RequestParam(required = false) String to,
+            @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+        return queries.list(actor, action(action), instant("from", from), instant("to", to),
+                paging.resolve(page, size));
+    }
+
+    /** The action a code names, case-insensitively; an unknown code is a 400, not an empty result. */
+    private static AuditAction action(String code) {
+        if (code == null || code.isBlank()) {
+            return null;
+        }
+        return AuditAction.parse(code).orElseThrow(() -> new InvalidRequestException(
+                "action must be one of " + Arrays.toString(AuditAction.values())));
     }
 
     private static Instant instant(String name, String value) {

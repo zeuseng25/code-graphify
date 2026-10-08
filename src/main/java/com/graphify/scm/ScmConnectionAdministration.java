@@ -1,5 +1,6 @@
 package com.graphify.scm;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.exception.ConflictException;
 import com.graphify.common.exception.ExternalSystemException;
@@ -73,7 +74,7 @@ public class ScmConnectionAdministration {
         } catch (DuplicateKeyException e) {
             throw new ConflictException("An SCM connection named " + valid.name() + " already exists");
         }
-        auditLog.record(actor, "SCM_CONNECTION_CREATED", valid.name(), valid.type().name());
+        auditLog.record(actor, AuditAction.SCM_CONNECTION_CREATED, valid.name(), valid.type().name());
         return get(id);
     }
 
@@ -128,7 +129,7 @@ public class ScmConnectionAdministration {
             // stored clone URLs still name the old host; never let the new credentials be sent there
             connections.deactivateRepositories(id);
         }
-        auditLog.record(actor, "SCM_CONNECTION_UPDATED", valid.name(),
+        auditLog.record(actor, AuditAction.SCM_CONNECTION_UPDATED, valid.name(),
                 "changed: " + changed(before, valid, !Objects.equals(secret, current.secret()))
                         + (repointed ? "; repositories deactivated until the next sync" : ""));
         return get(id);
@@ -148,7 +149,7 @@ public class ScmConnectionAdministration {
             throw new ConflictException("SCM connection " + current.name()
                     + " still has repositories and run history; disable it instead");
         }
-        auditLog.record(actor, "SCM_CONNECTION_DELETED", current.name(), null);
+        auditLog.record(actor, AuditAction.SCM_CONNECTION_DELETED, current.name(), null);
     }
 
     /** Not transactional: the test result is stored even when the test fails. */

@@ -1301,11 +1301,13 @@ export interface components {
             /** Format: int64 */
             appUserId?: number;
         };
+        /** @enum {string} */
+        AuditAction: "BOOTSTRAP_ADMIN_CREATED" | "LOGIN_SUCCEEDED" | "LOGIN_FAILED" | "LOGOUT" | "PASSWORD_CHANGED" | "ACCOUNT_LOCKED" | "USER_REGISTERED" | "USER_ROLE_CHANGED" | "USER_ACTIVE_CHANGED" | "LDAP_CONFIG_UPDATED" | "SCM_CONNECTION_CREATED" | "SCM_CONNECTION_UPDATED" | "SCM_CONNECTION_DELETED" | "ARTIFACT_REPOSITORY_CREATED" | "ARTIFACT_REPOSITORY_UPDATED" | "ARTIFACT_REPOSITORY_DELETED" | "SETTING_UPDATED" | "ENTRY_POINT_ANNOTATION_CREATED" | "ENTRY_POINT_ANNOTATION_UPDATED" | "ENTRY_POINT_ANNOTATION_DELETED" | "IMPACT_RULE_UPDATED";
         AuditEntry: {
             /** Format: int64 */
             id?: number;
             actor?: string;
-            action?: string;
+            action?: components["schemas"]["AuditAction"];
             target?: string;
             details?: string;
             /** Format: date-time */
@@ -2511,7 +2513,7 @@ export interface operations {
         parameters: {
             query?: {
                 actor?: string;
-                action?: string;
+                action?: components["schemas"]["AuditAction"];
                 from?: string;
                 to?: string;
                 page?: number;

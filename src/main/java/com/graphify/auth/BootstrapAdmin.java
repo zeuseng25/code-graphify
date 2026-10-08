@@ -1,5 +1,6 @@
 package com.graphify.auth;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.util.Utf8;
 import java.security.SecureRandom;
@@ -92,7 +93,7 @@ public class BootstrapAdmin implements SmartInitializingSingleton {
         String password = generate ? generatePassword() : configuredPassword;
         users.create(USERNAME, UserSource.LOCAL, "Administrator", null, Role.ADMIN, ACTOR);
         accounts.create(USERNAME, encoder.encode(password), true);
-        auditLog.record(ACTOR, "BOOTSTRAP_ADMIN_CREATED", USERNAME, generate ? "password generated" : "password from "
+        auditLog.record(ACTOR, AuditAction.BOOTSTRAP_ADMIN_CREATED, USERNAME, generate ? "password generated" : "password from "
                 + "APP_BOOTSTRAP_ADMIN_PASSWORD");
         return new Created(true, generate ? password : null);
     }

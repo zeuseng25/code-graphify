@@ -1,5 +1,6 @@
 package com.graphify.maven;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.exception.ConflictException;
 import com.graphify.common.exception.ExternalSystemException;
@@ -69,7 +70,7 @@ public class ArtifactRepositoryAdministration {
         } catch (DuplicateKeyException e) {
             throw new ConflictException("An artifact repository named " + valid.name() + " already exists");
         }
-        auditLog.record(actor, "ARTIFACT_REPOSITORY_CREATED", valid.name(), null);
+        auditLog.record(actor, AuditAction.ARTIFACT_REPOSITORY_CREATED, valid.name(), null);
         return get(id);
     }
 
@@ -88,7 +89,7 @@ public class ArtifactRepositoryAdministration {
         } catch (DuplicateKeyException e) {
             throw new ConflictException("An artifact repository named " + valid.name() + " already exists");
         }
-        auditLog.record(actor, "ARTIFACT_REPOSITORY_UPDATED", valid.name(),
+        auditLog.record(actor, AuditAction.ARTIFACT_REPOSITORY_UPDATED, valid.name(),
                 "changed: " + changed(before, valid, !Objects.equals(secret, current.secret())));
         return get(id);
     }
@@ -98,7 +99,7 @@ public class ArtifactRepositoryAdministration {
     public void delete(long id, String actor) {
         ArtifactRepositoryView current = get(id);
         repositories.delete(id);
-        auditLog.record(actor, "ARTIFACT_REPOSITORY_DELETED", current.name(), null);
+        auditLog.record(actor, AuditAction.ARTIFACT_REPOSITORY_DELETED, current.name(), null);
     }
 
     /** Not transactional: the test result is stored even when the test fails. */

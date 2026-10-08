@@ -1,5 +1,6 @@
 package com.graphify.auth;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.exception.ConflictException;
 import com.graphify.common.exception.InvalidRequestException;
@@ -51,7 +52,7 @@ public class LdapAdministration {
             requireLocalAdmin();
         }
         config.save(next, actor);
-        auditLog.record(actor, "LDAP_CONFIG_UPDATED", "ldap_config", "changed: " + String.join(", ",
+        auditLog.record(actor, AuditAction.LDAP_CONFIG_UPDATED, "ldap_config", "changed: " + String.join(", ",
                 changedFields(current, next)));
         return config.view();
     }

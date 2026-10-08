@@ -1,5 +1,6 @@
 package com.graphify.auth;
 
+import com.graphify.audit.AuditAction;
 import com.graphify.audit.AuditLog;
 import com.graphify.common.exception.ConflictException;
 import com.graphify.common.exception.ExternalSystemException;
@@ -124,7 +125,7 @@ public class LoginService {
             boolean lockedNow = accounts.recordFailure(name, settings.getInt(SettingKeys.AUTH_MAX_FAILED_ATTEMPTS),
                     settings.getDuration(SettingKeys.AUTH_LOCK_DURATION));
             if (lockedNow) {
-                auditLog.record(audited(name), "ACCOUNT_LOCKED", audited(name),
+                auditLog.record(audited(name), AuditAction.ACCOUNT_LOCKED, audited(name),
                         "locked for " + settings.getDuration(SettingKeys.AUTH_LOCK_DURATION));
             }
             throw failed(name, "wrong password");
@@ -155,7 +156,7 @@ public class LoginService {
             throw new InvalidRequestException("The new password must differ from the current one");
         }
         accounts.setPassword(who.username(), encoder.encode(newPassword), false);
-        auditLog.record(audited(who.username()), "PASSWORD_CHANGED", audited(who.username()), null);
+        auditLog.record(audited(who.username()), AuditAction.PASSWORD_CHANGED, audited(who.username()), null);
         return reload(who.userId()).orElseThrow(() -> new ConflictException("The user is no longer active"));
     }
 
@@ -184,13 +185,13 @@ public class LoginService {
     }
 
     private AppPrincipal succeeded(AppPrincipal principal) {
-        auditLog.record(audited(principal.username()), "LOGIN_SUCCEEDED", audited(principal.username()),
+        auditLog.record(audited(principal.username()), AuditAction.LOGIN_SUCCEEDED, audited(principal.username()),
                 principal.source().name());
         return principal;
     }
 
     private LoginFailedException failed(String name, String reason) {
-        auditLog.record(audited(name), "LOGIN_FAILED", audited(name), reason);
+        auditLog.record(audited(name), AuditAction.LOGIN_FAILED, audited(name), reason);
         return new LoginFailedException();
     }
 
