@@ -27,7 +27,7 @@ Komutlar macOS ve Linux için yazıldı. Windows'ta komut satırı farkları ad�
 11. [İlk taramayı başlatın](#11-ilk-taramayı-başlatın)
 12. [Uygulamayı kullanın](#12-uygulamayı-kullanın)
 13. [İsteğe bağlı: LDAP ve özel Maven repository'leri](#13-isteğe-bağlı-ldap-ve-özel-maven-repositoryleri)
-14. [Yeni sürüme güncelleme](#14-yeni-sürüme-güncelleme)
+14. [Yeni sürüme güncelleme](#14-yeni-sürüme-güncelleme) (ve [smoke test](#141-isteğe-bağlı-warı-göndermeden-önce-smoke-test-ile-doğrulayın))
 15. [Sorun giderme](#15-sorun-giderme)
 16. [Kısa özet](#16-kısa-özet)
 
@@ -424,6 +424,9 @@ HTTPS'te WildFly'ın kendi ürettiği sertifika kullanıldığı için tarayıc�
 
 Başka bir makineden erişmek için `localhost` yerine sunucunun adresini yazın. WildFly varsayılan olarak yalnızca `localhost`'u dinler. Dışarıdan erişim için başlatırken `-b 0.0.0.0` ekleyin: `./bin/standalone.sh -b 0.0.0.0`.
 
+
+> WAR'ı canlı sunucuya koymadan önce ayrı bir test WildFly'ında otomatik olarak denemek isterseniz [14.1 Smoke test](#141-isteğe-bağlı-warı-göndermeden-önce-smoke-test-ile-doğrulayın) bölümüne bakın.
+
 ---
 
 ## 8. İlk giriş
@@ -561,6 +564,66 @@ cp target/graphify-0.0.1-SNAPSHOT.war WILDFLY_HOME/standalone/deployments/graphi
 - WildFly çalışırken dosyanın üzerine kopyalamak yeterlidir. WildFly yeni sürümü kendiliğinden yükler ve `graphify.war.deployed` dosyası yeniden oluşur.
 - Veritabanı değişiklikleri açılışta otomatik uygulanır. Seçenek C'yi (Flyway kapalı) kullanıyorsanız, yeni script'leri uygulamayı güncellemeden önce DBA'nın çalıştırması gerekir (bkz. [3. adım, Seçenek C](#seçenek-c-tabloları-dba-oluşturur-uygulama-yalnızca-veri-izniyle-bağlanır)).
 - O sırada açık olan tarayıcı sekmeleri, yeni sürüme geçmek için gerekirse kendiliğinden bir kez yenilenir.
+
+### 14.1 (İsteğe bağlı) WAR'ı göndermeden önce smoke test ile doğrulayın
+
+Projedeki `scripts/wildfly-smoke.sh`, derlenen WAR dosyasının gerçek bir WildFly'da açılıp temel işlerini yapabildiğini birkaç dakikada otomatik kontrol eder. Bir **duman testidir** (smoke test): kalıcı bir kurulum yapmaz, işi bitince her şeyi geri toplar. Yeni bir sürümü canlı sunucuya göndermeden önce ya da bir CI/CD hattında "bu WAR WildFly'da çalışıyor mu?" sorusunu yanıtlamak için kullanılır.
+
+**Ne yapar:**
+
+1. **Önce güvenlik kontrolleri.** Şu durumlardan biri varsa hiçbir şeye dokunmadan durur, böylece çalışan bir sunucuyu yanlışlıkla bozmaz:
+   - Verilen portta (varsayılan 8080) zaten bir şey çalışıyor.
+   - Aynı WildFly klasörü zaten çalışıyor.
+   - Aynı adla deploy edilmiş bir uygulama var.
+2. WAR'ı `standalone/deployments/graphify.war` olarak kopyalar ve WildFly'ı başlatır.
+3. Deploy sonucunu bekler (varsayılan en fazla 300 saniye). Deploy başarısız olur ya da WildFly kapanırsa, log'daki hataları gösterip testi başarısız sayar.
+4. Uygulamanın gerçekten cevap verdiğini kontrol eder:
+   - **API:** `/api/v1/auth/csrf` cevap veriyor mu?
+   - **Web arayüzü:** Ana sayfa geliyor mu ve doğru adresi (`<base href>`) gösteriyor mu? Sayfanın istediği JS dosyası iniyor mu? `/repositories/1/graph` gibi doğrudan bir sayfa adresi uygulamayı açıyor mu? Güvenlik başlığı (Content-Security-Policy) var mı?
+   - **Giriş** (`SMOKE_USER` ve `SMOKE_PASSWORD` verilmişse): gerçekten giriş yapmayı dener. Şifre komut satırında görünmesin diye stdin üzerinden gönderilir.
+5. **Temizlik:** Sonuç ne olursa olsun WildFly'ı durdurur, kopyaladığı WAR'ı siler ve log dosyasının yerini yazar.
+
+**Nasıl çalıştırılır** (macOS/Linux; Windows'ta WSL ya da Git Bash gerekir):
+
+```bash
+export WILDFLY_HOME=~/servers/wildfly-test-41.0.0.Final   # test için ayrı bir WildFly kurulumu
+export DB_URL="jdbc:oracle:thin:@//localhost:1521/FREEPDB1"
+export DB_USER="graphify_test"
+export DB_PASSWORD="<TEST_SIFRESI>"
+export APP_MASTER_KEY="<openssl rand -base64 32 ile üretilmiş anahtar>"
+export APP_BOOTSTRAP_ADMIN_PASSWORD="<en az 12 karakterlik şifre>"   # giriş testi için
+export SMOKE_USER=admin
+export SMOKE_PASSWORD="$APP_BOOTSTRAP_ADMIN_PASSWORD"
+
+scripts/wildfly-smoke.sh target/graphify-0.0.1-SNAPSHOT.war
+```
+
+Başarılı olursa şuna benzer satırlar yazar:
+
+```
+OK  http://localhost:8080/graphify/api/v1/auth/csrf
+OK  http://localhost:8080/graphify/ (index, asset, deep link)
+OK  login as admin
+WildFly smoke test passed
+```
+
+Ek ayarlar:
+
+| Değişken | Ne | Varsayılan |
+|---|---|---|
+| `WILDFLY_HTTP_PORT` | WildFly'ın HTTP portu | `8080` |
+| `WILDFLY_DEPLOY_TIMEOUT` | Deploy için beklenecek en uzun süre (saniye) | `300` |
+| `SMOKE_FORCE` | `1` verilirse aynı adlı mevcut deploy'un yerine geçer | — |
+| `JAVA_OPTS` | Başka bir WildFly'ın yanında çalıştırmak için port kaydırma, örn. `-Djboss.socket.binding.port-offset=1000` (o zaman `WILDFLY_HTTP_PORT=9080`) | — |
+
+Script'in ikinci parametresi, uygulamanın adresindeki adı değiştirir (varsayılan `graphify`). Örneğin `scripts/wildfly-smoke.sh target/graphify-0.0.1-SNAPSHOT.war graphify-test` uygulamayı `/graphify-test` adresinde dener.
+
+**Dikkat edilecekler:**
+
+- WildFly'ı kendisi başlatıp kapattığı için **canlıda çalışan sunucuda kullanılmaz**. Test için ayrı, boş bir WildFly kurulumu kullanın; 5. adımdaki zip'i başka bir klasöre açmanız yeterli.
+- Gerçek bir veritabanına bağlanır. İlk çalıştırmada o şemada tabloları oluşturur ve `admin` kullanıcısını açar. Bu yüzden **ayrı, boş bir test şeması** kullanın, canlı şemayı değil.
+  - Aynı şemada ikinci çalıştırmada `admin`'in şifresi değişmişse giriş testi başarısız olur; o zaman `SMOKE_PASSWORD` olarak güncel şifreyi verin.
+- Yalnızca uygulamanın ayağa kalkıp cevap verdiğini kontrol eder; tarama, arama ya da etki analizi gibi işlevleri test etmez.
 
 ---
 
