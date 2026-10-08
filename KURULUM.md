@@ -385,6 +385,48 @@ Kurum içi mirror kullanıcı adı ve şifre istiyorsa, bu bilgileri projeye **y
 
 `-Dfrontend.skip=true` ile web arayüzü hiç derlenmez; iki adrese de gerek kalmaz. Ortaya çıkan WAR yalnızca API'yi içerir. Kullanıcıların kullanacağı WAR için **kullanmayın**.
 
+### 4.2 IntelliJ IDEA ile derleme
+
+Komut satırı yerine IntelliJ IDEA'dan da derleyebilirsiniz. Önce projeyi açın: **File → Open** ile `code-graphify` klasörünü seçin. IntelliJ bunun bir Maven projesi olduğunu tanır.
+
+#### Önce iki ayarı kontrol edin
+
+IntelliJ, Maven'ı kendi Maven ayarlarıyla çalıştırır. Bunlar yanlışsa derleme hata verir. **Settings → Build, Execution, Deployment → Build Tools → Maven** sayfasında:
+
+- **Maven home path:** **Use Maven wrapper** seçin. Böylece komut satırındaki gibi projenin sabitlediği Maven 3.9.16 kullanılır (bkz. [4.1](#41-derleme-sırasında-neler-oluyor)).
+- **Runner → JRE:** JDK 25'i seçin.
+  - Bu yanlışsa derleme `JDK 25 is required` hatasıyla durur.
+  - Listede JDK 25 yoksa önce **File → Project Structure → SDKs** bölümünden ekleyin.
+
+#### Seçenek 1: Maven penceresinden (ek eklenti gerekmez)
+
+1. Sağ kenardaki **Maven** penceresini açın.
+2. Üstteki **Execute Maven Goal** simgesine (`m` harfi) tıklayın.
+3. Açılan kutuya şunu yazıp Enter'a basın:
+
+   ```
+   mvn -DskipTests package -Dfrontend.node.downloadRoot=https://nodejs.org/dist/ -Dfrontend.npm.registry=https://registry.npmjs.org
+   ```
+
+#### Seçenek 2: Maven Helper eklentisiyle
+
+1. `pom.xml` dosyasına sağ tıklayın → **Run Maven → New Goal**.
+2. Açılan kutuya, **başına `mvn` yazmadan**, şunu yazıp onaylayın:
+
+   ```
+   -DskipTests package -Dfrontend.node.downloadRoot=https://nodejs.org/dist/ -Dfrontend.npm.registry=https://registry.npmjs.org
+   ```
+
+3. Eklenti bu goal'ü çalıştırır ve kaydeder. Sonraki seferlerde `pom.xml` → sağ tık → **Run Maven** menüsünde hazır görünür; doğrudan tıklamanız yeterli.
+
+Kayıtlı goal'leri düzenlemek ya da silmek için eklentinin ayarlarına bakın (**Settings → Other Settings → Maven Helper**). Menü adları eklentinin sürümüne göre biraz farklı olabilir.
+
+#### Her iki seçenekte
+
+- Komutu terminaldeki gibi satırlara bölmeyin; satır sonlarındaki `\` olmadan tek satır yazın.
+- Adresleri `~/.m2/settings.xml`'e koyduysanız (bkz. [4.1](#41-derleme-sırasında-neler-oluyor)), komut yalnızca `-DskipTests package` olur.
+- Derleme alttaki **Run** penceresinde akar. `BUILD SUCCESS` ile bitince WAR dosyası **`target/graphify-0.0.1-SNAPSHOT.war`** olarak oluşur.
+
 ---
 
 ## 5. WildFly'ı kurun
