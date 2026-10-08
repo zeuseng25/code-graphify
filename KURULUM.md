@@ -153,7 +153,119 @@ SELECT value FROM nls_database_parameters WHERE parameter = 'NLS_CHARACTERSET';
 -- Sonuç AL32UTF8 olmalı
 ```
 
-Tabloları **siz oluşturmazsınız**. Uygulama ilk açılışta tabloları kendisi oluşturur (Flyway migration'ları) ve sonraki sürümlerde günceller.
+A ve B seçeneklerinde tabloları **siz oluşturmazsınız**. Uygulama ilk açılışta tabloları kendisi oluşturur (Flyway migration'ları) ve sonraki sürümlerde günceller. Tabloların DBA tarafından oluşturulması gerekiyorsa Seçenek C'ye bakın.
+
+### Seçenek C: Tabloları DBA oluşturur, uygulama yalnızca veri izniyle bağlanır
+
+Kurumsal ortamlarda tabloların uygulama tarafından değil, DBA tarafından script'lerle oluşturulması istenebilir. Graphify bunu kod değişikliği olmadan destekler.
+
+Bu yapıda iki kullanıcı olur:
+
+- **Şema sahibi** (örnekte `GRAPHIFY_OWNER`): tablolar bu şemada durur; script'leri DBA bu kullanıcıyla çalıştırır.
+- **Uygulama kullanıcısı** (örnekte `GRAPHIFY_APP`): uygulama bu kullanıcıyla bağlanır. Yalnızca tablolarda veri okuma ve yazma izni vardır; tablo oluşturamaz ve değiştiremez.
+
+Uygulama çalışırken hiçbir tablo oluşturmaz ve değiştirmez. Bütün şema değişiklikleri aşağıdaki script'lerdedir.
+
+> Bu yapı Oracle 23 Free ve WildFly 41 üzerinde baştan sona denendi: kurulum, giriş, ayarlar, repo bağlantısı, tarama, arama ve etki analizi.
+
+#### C.1 Kullanıcıları oluşturun (DBA, SYSTEM gibi yetkili bir kullanıcıyla)
+
+```sql
+CREATE USER graphify_owner IDENTIFIED BY "<SAHIP_SIFRESI>";
+GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO graphify_owner;
+ALTER USER graphify_owner QUOTA UNLIMITED ON <TABLESPACE>;
+
+CREATE USER graphify_app IDENTIFIED BY "<UYGULAMA_SIFRESI>";
+GRANT CREATE SESSION TO graphify_app;
+```
+
+#### C.2 Script'leri sırayla çalıştırın (şema sahibi olarak)
+
+Script'ler iki yerde bulunur; ikisi de aynı dosyalardır:
+
+- Projede: `src/main/resources/db/migration/`
+- Derlenmiş WAR dosyasında: `WEB-INF/classes/db/migration/`
+
+Dosyalar `V1__…sql`, `V2__…sql`, …, `V13__…sql` diye numaralıdır. Hepsi **numara sırasıyla** ve **hiçbiri atlanmadan** çalıştırılmalıdır (V9'dan sonra V10 gelir; dosya adına göre alfabetik sıralama yanlış sonuç verir). Script'ler yalnızca tabloları değil, uygulamanın ihtiyaç duyduğu başlangıç verilerini de (ayarlar, etki kuralları, entry point tanımları) içerir.
+
+SQL*Plus ile örnek, her dosya için:
+
+```sql
+-- graphify_owner kullanıcısıyla bağlanın
+WHENEVER SQLERROR EXIT FAILURE
+SET SQLBLANKLINES ON
+SET DEFINE OFF
+@V1__core_schema.sql
+COMMIT;
+```
+
+- `SET SQLBLANKLINES ON`: Bazı ifadelerin içinde boş satır var; bu ayar olmadan SQL*Plus onları yarıda keser. SQL Developer ve SQLcl'de gerekmez.
+- `WHENEVER SQLERROR EXIT FAILURE`: Bir hata olursa durur; böylece yarım kalmış bir kurulum fark edilmeden geçmez.
+
+Bütün dosyaları tek seferde sırayla çalıştırmak için (Linux/macOS, `sqlplus` kurulu bir makinede, dosyaların bulunduğu klasörde):
+
+```bash
+for v in $(seq 1 13); do
+  f=$(ls V${v}__*.sql)
+  echo "== $f"
+  sqlplus -s "graphify_owner/<SAHIP_SIFRESI>@//<DB_HOST>:1521/<SERVIS_ADI>" <<EOF || break
+WHENEVER SQLERROR EXIT FAILURE
+SET SQLBLANKLINES ON
+SET DEFINE OFF
+@$f
+COMMIT;
+EXIT
+EOF
+done
+```
+
+#### C.3 Uygulama kullanıcısına veri izinlerini verin (DBA)
+
+Script'ler bittikten sonra, şema sahibinin bütün tablolarında okuma ve yazma izni verin:
+
+```sql
+BEGIN
+  FOR t IN (SELECT table_name FROM dba_tables WHERE owner = 'GRAPHIFY_OWNER') LOOP
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON graphify_owner."'
+      || t.table_name || '" TO graphify_app';
+  END LOOP;
+END;
+/
+```
+
+#### C.4 Uygulamayı buna göre ayarlayın
+
+[6. adımda](#6-ortam-değişkenlerini-tanımlayın) şu farklarla tanımlayın:
+
+- `DB_USER` olarak **uygulama kullanıcısını** (`graphify_app`) ve onun şifresini yazın.
+- Şu iki satırı ekleyin:
+
+```bash
+# Flyway kapalı: uygulama tablo oluşturmaz ve şemayı kontrol etmez
+export SPRING_FLYWAY_ENABLED=false
+# Her bağlantıda tabloların bulunduğu şemayı seç
+export SPRING_APPLICATION_JSON='{"spring":{"datasource":{"hikari":{"connection-init-sql":"ALTER SESSION SET CURRENT_SCHEMA=GRAPHIFY_OWNER"}}}}'
+```
+
+Windows (`standalone.conf.bat`):
+
+```bat
+set "SPRING_FLYWAY_ENABLED=false"
+set "SPRING_APPLICATION_JSON={"spring":{"datasource":{"hikari":{"connection-init-sql":"ALTER SESSION SET CURRENT_SCHEMA=GRAPHIFY_OWNER"}}}}"
+```
+
+(Windows satırları denenmedi; macOS/Linux satırları denendi.)
+
+> **Dikkat:** Şema ayarını `SPRING_DATASOURCE_HIKARI_CONNECTION_INIT_SQL` adlı bir ortam değişkeniyle vermeyin. Spring bu adı iki farklı ayar olarak yorumlayabiliyor ve uygulama açılışta `The configuration of the pool is sealed once started` hatasıyla durur. Yukarıdaki `SPRING_APPLICATION_JSON` yolu bu sorunu yaşamaz.
+
+#### Bu seçeneğin dikkat edilecek yönleri
+
+- **Eksik tablo geç fark edilir.** Uygulama açılışta tabloların varlığını kontrol etmez. Bir script atlanırsa, eksik tablo ancak onu kullanan özellik çalıştığında hata verir.
+- **Yeni sürümlerin script'lerini DBA uygular.** Yeni bir sürüm yeni bir script getirirse (örneğin `V14__…sql`), uygulamayı güncellemeden **önce** DBA'nın o script'i şema sahibiyle çalıştırması ve C.3'teki izin bloğunu tekrar çalıştırması gerekir; izin bloğu, yeni eklenen tablolara da izin verir. Hangi script'lerin uygulandığını sizin kaydetmeniz gerekir; Flyway kapalıyken bunu veritabanı tutmaz. İki sürüm arasında eklenen script'leri görmek için:
+
+  ```bash
+  git diff --name-only <eski-sürüm> <yeni-sürüm> -- src/main/resources/db/migration
+  ```
 
 ---
 
@@ -218,6 +330,8 @@ Uygulama, veritabanı bilgilerini ve gizli anahtarını kodda değil, ortam değ
 | `APP_MASTER_KEY` | Kaydedilen token ve şifreleri şifreleyen anahtar (aşağıda nasıl üretileceği anlatılıyor) | `k3J9...=` |
 | `APP_BOOTSTRAP_ADMIN_PASSWORD` | İlk `admin` kullanıcısının geçici şifresi (en az 12 karakter) | `Gecici-Sifre-2026` |
 | `SPRING_PROFILES_ACTIVE` | Çalışma profili: canlı ortamda `prod` (daha az log), denemede `dev` | `prod` |
+
+Tabloları DBA oluşturduysa ([3. adım, Seçenek C](#seçenek-c-tabloları-dba-oluşturur-uygulama-yalnızca-veri-izniyle-bağlanır)) bu değişkenlere ek olarak `SPRING_FLYWAY_ENABLED` ve `SPRING_APPLICATION_JSON` de gerekir.
 
 ### 6.1 Master key üretin
 
@@ -445,7 +559,7 @@ cp target/graphify-0.0.1-SNAPSHOT.war WILDFLY_HOME/standalone/deployments/graphi
 ```
 
 - WildFly çalışırken dosyanın üzerine kopyalamak yeterlidir. WildFly yeni sürümü kendiliğinden yükler ve `graphify.war.deployed` dosyası yeniden oluşur.
-- Veritabanı değişiklikleri açılışta otomatik uygulanır.
+- Veritabanı değişiklikleri açılışta otomatik uygulanır. Seçenek C'yi (Flyway kapalı) kullanıyorsanız, yeni script'leri uygulamayı güncellemeden önce DBA'nın çalıştırması gerekir (bkz. [3. adım, Seçenek C](#seçenek-c-tabloları-dba-oluşturur-uygulama-yalnızca-veri-izniyle-bağlanır)).
 - O sırada açık olan tarayıcı sekmeleri, yeni sürüme geçmek için gerekirse kendiliğinden bir kez yenilenir.
 
 ---
