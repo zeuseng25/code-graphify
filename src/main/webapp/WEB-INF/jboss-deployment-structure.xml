@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Spring Boot brings its own web, JSON, logging and data stack; WildFly's must not be added to this deployment.
+     Excluding the subsystems also keeps their modules (RESTEasy/Jackson, slf4j/log4j/commons-logging) off the class path. -->
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+    <deployment>
+        <exclude-subsystems>
+            <subsystem name="jaxrs"/>
+            <subsystem name="jpa"/>
+            <subsystem name="weld"/>
+            <subsystem name="logging"/>
+            <!-- Jakarta Faces would otherwise start with the web app and demands CDI, which weld's exclusion removes. -->
+            <subsystem name="jsf"/>
+        </exclude-subsystems>
+    </deployment>
+</jboss-deployment-structure>

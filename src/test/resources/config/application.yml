@@ -1,0 +1,5 @@
+app:
+  master-key: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+  bootstrap-admin-password: Bootstrap-Test-Password-1
+  scheduling:
+    enabled: false

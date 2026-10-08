@@ -1,0 +1,9 @@
+/* The frame (header and menu) and the bordered cards get their own tone in each scheme (see theme.ts). */
+.mantine-AppShell-header,
+.mantine-AppShell-navbar {
+  background-color: var(--app-chrome-bg);
+}
+
+.mantine-Paper-root[data-with-border] {
+  background-color: var(--app-card-bg);
+}

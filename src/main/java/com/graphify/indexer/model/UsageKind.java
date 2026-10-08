@@ -1,0 +1,5 @@
+package com.graphify.indexer.model;
+
+public enum UsageKind {
+    CALL, INSTANTIATION, METHOD_REF, TYPE_REF, EXTENDS, IMPLEMENTS, OVERRIDES, FIELD_READ, FIELD_WRITE, ANNOTATION
+}

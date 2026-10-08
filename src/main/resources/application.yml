@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: graphify
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  mvc:
+    problemdetails:
+      enabled: true
+
+app:
+  master-key: ${APP_MASTER_KEY}
+  bootstrap-admin-password: ${APP_BOOTSTRAP_ADMIN_PASSWORD:}
+
+springdoc:
+  api-docs:
+    path: /api/v1/openapi.json

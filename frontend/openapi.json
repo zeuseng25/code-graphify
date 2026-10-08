@@ -1,0 +1,3328 @@
+{
+  "openapi" : "3.1.0",
+  "info" : {
+    "title" : "OpenAPI definition",
+    "version" : "v0"
+  },
+  "paths" : {
+    "/api/v1/admin/users/{id}/role" : {
+      "put" : {
+        "tags" : [ "user-admin-controller" ],
+        "operationId" : "changeRole",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RoleChange"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AppUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users/{id}/active" : {
+      "put" : {
+        "tags" : [ "user-admin-controller" ],
+        "operationId" : "changeActive",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ActiveChange"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AppUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/settings/{key}" : {
+      "put" : {
+        "tags" : [ "settings-admin-controller" ],
+        "operationId" : "update",
+        "parameters" : [ {
+          "name" : "key",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ValueChange"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Setting"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/scm-connections/{id}" : {
+      "get" : {
+        "tags" : [ "scm-connection-admin-controller" ],
+        "operationId" : "get",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ScmConnectionView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "scm-connection-admin-controller" ],
+        "operationId" : "update_1",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ScmConnectionUpdate"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ScmConnectionView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "scm-connection-admin-controller" ],
+        "operationId" : "delete",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/ldap" : {
+      "get" : {
+        "tags" : [ "ldap-admin-controller" ],
+        "operationId" : "get_1",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LdapConfigView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "ldap-admin-controller" ],
+        "operationId" : "update_2",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LdapConfigUpdate"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LdapConfigView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/impact-rules/{kind}" : {
+      "put" : {
+        "tags" : [ "impact-rules-admin-controller" ],
+        "operationId" : "updateRule",
+        "parameters" : [ {
+          "name" : "kind",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "CALL", "INSTANTIATION", "METHOD_REF", "TYPE_REF", "EXTENDS", "IMPLEMENTS", "OVERRIDES", "FIELD_READ", "FIELD_WRITE", "ANNOTATION" ]
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RuleChange"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ImpactRule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/entry-point-annotations/{id}" : {
+      "put" : {
+        "tags" : [ "impact-rules-admin-controller" ],
+        "operationId" : "update_3",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AnnotationChange"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntryPointAnnotation"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "impact-rules-admin-controller" ],
+        "operationId" : "delete_1",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/artifact-repositories/{id}" : {
+      "get" : {
+        "tags" : [ "artifact-repository-admin-controller" ],
+        "operationId" : "get_2",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ArtifactRepositoryView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "artifact-repository-admin-controller" ],
+        "operationId" : "update_4",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ArtifactRepositoryUpdate"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ArtifactRepositoryView"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "artifact-repository-admin-controller" ],
+        "operationId" : "delete_2",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/index/runs" : {
+      "get" : {
+        "tags" : [ "index-run-controller" ],
+        "operationId" : "list",
+        "parameters" : [ {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageIndexRunSummary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "index-run-controller" ],
+        "operationId" : "start",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/StartRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/StartedRun"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/index/runs/{runId}/cancel" : {
+      "post" : {
+        "tags" : [ "index-run-controller" ],
+        "operationId" : "cancel",
+        "parameters" : [ {
+          "name" : "runId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/impact" : {
+      "post" : {
+        "tags" : [ "impact-controller" ],
+        "operationId" : "analyze",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ImpactRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ImpactResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/impact/export" : {
+      "post" : {
+        "tags" : [ "impact-controller" ],
+        "operationId" : "export",
+        "parameters" : [ {
+          "name" : "format",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ImpactRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout" : {
+      "post" : {
+        "tags" : [ "auth-controller" ],
+        "operationId" : "logout",
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login" : {
+      "post" : {
+        "tags" : [ "auth-controller" ],
+        "operationId" : "login",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Credentials"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Me"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/change-password" : {
+      "post" : {
+        "tags" : [ "auth-controller" ],
+        "operationId" : "changePassword",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PasswordChange"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Me"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/users" : {
+      "get" : {
+        "tags" : [ "user-admin-controller" ],
+        "operationId" : "list_1",
+        "parameters" : [ {
+          "name" : "q",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageAppUser"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "user-admin-controller" ],
+        "operationId" : "register",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Registration"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AppUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/scm-connections" : {
+      "get" : {
+        "tags" : [ "scm-connection-admin-controller" ],
+        "operationId" : "list_2",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ScmConnectionView"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "scm-connection-admin-controller" ],
+        "operationId" : "create",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ScmConnectionUpdate"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ScmConnectionView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/scm-connections/{id}/test" : {
+      "post" : {
+        "tags" : [ "scm-connection-admin-controller" ],
+        "operationId" : "test",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/ldap/test" : {
+      "post" : {
+        "tags" : [ "ldap-admin-controller" ],
+        "operationId" : "test_1",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LdapConfigUpdate"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/entry-point-annotations" : {
+      "get" : {
+        "tags" : [ "impact-rules-admin-controller" ],
+        "operationId" : "annotations",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/EntryPointAnnotation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "impact-rules-admin-controller" ],
+        "operationId" : "create_1",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AnnotationChange"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntryPointAnnotation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/artifact-repositories" : {
+      "get" : {
+        "tags" : [ "artifact-repository-admin-controller" ],
+        "operationId" : "list_3",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ArtifactRepositoryView"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "artifact-repository-admin-controller" ],
+        "operationId" : "create_2",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ArtifactRepositoryUpdate"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ArtifactRepositoryView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/artifact-repositories/{id}/test" : {
+      "post" : {
+        "tags" : [ "artifact-repository-admin-controller" ],
+        "operationId" : "test_2",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/index.html" : {
+      "get" : {
+        "tags" : [ "spa-controller" ],
+        "operationId" : "index",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ui-config" : {
+      "get" : {
+        "tags" : [ "ui-config-controller" ],
+        "operationId" : "uiConfig",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UiConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/symbols/{id}" : {
+      "get" : {
+        "tags" : [ "symbol-controller" ],
+        "operationId" : "get_3",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SymbolDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/symbols/{id}/usages" : {
+      "get" : {
+        "tags" : [ "symbol-controller" ],
+        "operationId" : "usages",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "confidence",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "EXACT", "RECOVERED", "NAME_ONLY" ]
+            },
+            "uniqueItems" : true
+          }
+        }, {
+          "name" : "kind",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "CALL", "INSTANTIATION", "METHOD_REF", "TYPE_REF", "EXTENDS", "IMPLEMENTS", "OVERRIDES", "FIELD_READ", "FIELD_WRITE", "ANNOTATION" ]
+            },
+            "uniqueItems" : true
+          }
+        }, {
+          "name" : "repo",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageUsageView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/symbols/{id}/usages/summary" : {
+      "get" : {
+        "tags" : [ "symbol-controller" ],
+        "operationId" : "summary",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UsageSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/symbols/search" : {
+      "get" : {
+        "tags" : [ "symbol-controller" ],
+        "operationId" : "search",
+        "parameters" : [ {
+          "name" : "q",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "kind",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "CLASS", "INTERFACE", "ENUM", "RECORD", "ANNOTATION_TYPE", "METHOD", "CONSTRUCTOR", "FIELD" ]
+          }
+        }, {
+          "name" : "repo",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageSymbolHit"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/repositories" : {
+      "get" : {
+        "tags" : [ "repository-controller" ],
+        "operationId" : "list_4",
+        "parameters" : [ {
+          "name" : "q",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "status",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageRepositorySummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/repositories/{id}" : {
+      "get" : {
+        "tags" : [ "repository-controller" ],
+        "operationId" : "get_4",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RepositoryDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/repositories/{id}/runs" : {
+      "get" : {
+        "tags" : [ "index-run-controller" ],
+        "operationId" : "repositoryRuns",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageIndexRunRepoView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/repositories/{id}/graph" : {
+      "get" : {
+        "tags" : [ "repo-graph-controller" ],
+        "operationId" : "graph",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "level",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "focus",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "includeExternal",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RepoGraph"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/repositories/{id}/graph/report" : {
+      "get" : {
+        "tags" : [ "repo-graph-controller" ],
+        "operationId" : "report",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RepoGraphReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/repositories/{id}/graph/export" : {
+      "get" : {
+        "tags" : [ "repo-graph-controller" ],
+        "operationId" : "export_1",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "format",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "level",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "focus",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "includeExternal",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/index/runs/{runId}" : {
+      "get" : {
+        "tags" : [ "index-run-controller" ],
+        "operationId" : "get_5",
+        "parameters" : [ {
+          "name" : "runId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IndexRunView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me" : {
+      "get" : {
+        "tags" : [ "auth-controller" ],
+        "operationId" : "me",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Me"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/csrf" : {
+      "get" : {
+        "tags" : [ "auth-controller" ],
+        "operationId" : "csrf",
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/CsrfToken"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CsrfView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/settings" : {
+      "get" : {
+        "tags" : [ "settings-admin-controller" ],
+        "operationId" : "list_5",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Setting"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/ldap/users" : {
+      "get" : {
+        "tags" : [ "user-admin-controller" ],
+        "operationId" : "searchDirectory",
+        "parameters" : [ {
+          "name" : "q",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/DirectoryUserView"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/impact-rules" : {
+      "get" : {
+        "tags" : [ "impact-rules-admin-controller" ],
+        "operationId" : "rules",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/ImpactRule"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/audit" : {
+      "get" : {
+        "tags" : [ "audit-controller" ],
+        "operationId" : "list_6",
+        "parameters" : [ {
+          "name" : "actor",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "action",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "from",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "to",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PageAuditEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "RoleChange" : {
+        "type" : "object",
+        "properties" : {
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "USER" ]
+          }
+        }
+      },
+      "AppUser" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "source" : {
+            "type" : "string",
+            "enum" : [ "LOCAL", "LDAP" ]
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "USER" ]
+          },
+          "roleGrantedBy" : {
+            "type" : "string"
+          },
+          "roleGrantedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "lastLoginAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "active" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ActiveChange" : {
+        "type" : "object",
+        "properties" : {
+          "active" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ValueChange" : {
+        "type" : "object",
+        "properties" : {
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Setting" : {
+        "type" : "object",
+        "properties" : {
+          "key" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "INT", "STRING", "BOOL", "CRON", "LIST", "DURATION" ]
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "minValue" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "maxValue" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "updatedBy" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "ScmConnectionUpdate" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "BITBUCKET_DC", "GITHUB", "GIT" ]
+          },
+          "baseUrl" : {
+            "type" : "string"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "secret" : {
+            "type" : "string"
+          },
+          "includeProjects" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "excludeRepos" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "repositoryUrls" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "includeOwnRepositories" : {
+            "type" : "boolean"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ScmConnectionView" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "BITBUCKET_DC", "GITHUB", "GIT" ]
+          },
+          "baseUrl" : {
+            "type" : "string"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "secretSet" : {
+            "type" : "boolean"
+          },
+          "includeProjects" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "excludeRepos" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "repositoryUrls" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "includeOwnRepositories" : {
+            "type" : "boolean"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "lastTestStatus" : {
+            "type" : "string"
+          },
+          "lastTestAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "lastSyncStatus" : {
+            "type" : "string"
+          },
+          "lastSyncAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "lastSyncError" : {
+            "type" : "string"
+          },
+          "repositoryCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "LdapConfigUpdate" : {
+        "type" : "object",
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "baseDn" : {
+            "type" : "string"
+          },
+          "userSearchBase" : {
+            "type" : "string"
+          },
+          "userSearchFilter" : {
+            "type" : "string"
+          },
+          "userQueryFilter" : {
+            "type" : "string"
+          },
+          "usernameAttr" : {
+            "type" : "string"
+          },
+          "displayNameAttr" : {
+            "type" : "string"
+          },
+          "emailAttr" : {
+            "type" : "string"
+          },
+          "bindDn" : {
+            "type" : "string"
+          },
+          "bindPassword" : {
+            "type" : "string"
+          }
+        }
+      },
+      "LdapConfigView" : {
+        "type" : "object",
+        "properties" : {
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "baseDn" : {
+            "type" : "string"
+          },
+          "userSearchBase" : {
+            "type" : "string"
+          },
+          "userSearchFilter" : {
+            "type" : "string"
+          },
+          "userQueryFilter" : {
+            "type" : "string"
+          },
+          "usernameAttr" : {
+            "type" : "string"
+          },
+          "displayNameAttr" : {
+            "type" : "string"
+          },
+          "emailAttr" : {
+            "type" : "string"
+          },
+          "bindDn" : {
+            "type" : "string"
+          },
+          "bindPasswordSet" : {
+            "type" : "boolean"
+          },
+          "updatedBy" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "RuleChange" : {
+        "type" : "object",
+        "properties" : {
+          "propagates" : {
+            "type" : "boolean"
+          },
+          "shownAtLevel1" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ImpactRule" : {
+        "type" : "object",
+        "properties" : {
+          "kind" : {
+            "type" : "string",
+            "enum" : [ "CALL", "INSTANTIATION", "METHOD_REF", "TYPE_REF", "EXTENDS", "IMPLEMENTS", "OVERRIDES", "FIELD_READ", "FIELD_WRITE", "ANNOTATION" ]
+          },
+          "propagates" : {
+            "type" : "boolean"
+          },
+          "shownAtLevel1" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "AnnotationChange" : {
+        "type" : "object",
+        "properties" : {
+          "annotationFqn" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "EntryPointAnnotation" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "annotationFqn" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ArtifactRepositoryUpdate" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "secret" : {
+            "type" : "string"
+          },
+          "mirrorOf" : {
+            "type" : "string"
+          },
+          "sortOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ArtifactRepositoryView" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "secretSet" : {
+            "type" : "boolean"
+          },
+          "mirrorOf" : {
+            "type" : "string"
+          },
+          "sortOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "lastTestStatus" : {
+            "type" : "string"
+          },
+          "lastTestAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "StartRequest" : {
+        "type" : "object",
+        "properties" : {
+          "scope" : {
+            "type" : "string",
+            "enum" : [ "ALL", "CONNECTION", "REPOSITORY" ]
+          },
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "force" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "StartedRun" : {
+        "type" : "object",
+        "properties" : {
+          "runId" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "ImpactRequest" : {
+        "type" : "object",
+        "properties" : {
+          "symbolIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "changeType" : {
+            "type" : "string",
+            "enum" : [ "SIGNATURE", "BEHAVIOR" ]
+          },
+          "depth" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "confidences" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "EXACT", "RECOVERED", "NAME_ONLY" ]
+            },
+            "uniqueItems" : true
+          },
+          "includeDispatch" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "EntryPoint" : {
+        "type" : "object",
+        "properties" : {
+          "symbolId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "display" : {
+            "type" : "string"
+          },
+          "repository" : {
+            "$ref" : "#/components/schemas/RepositoryRef"
+          },
+          "modulePath" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "annotation" : {
+            "type" : "string"
+          },
+          "http" : {
+            "type" : "boolean"
+          },
+          "httpMethod" : {
+            "type" : "string"
+          },
+          "httpPath" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ImpactEdge" : {
+        "type" : "object",
+        "properties" : {
+          "fromSymbolId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "toSymbolId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "kind" : {
+            "type" : "string",
+            "enum" : [ "CALL", "INSTANTIATION", "METHOD_REF", "TYPE_REF", "EXTENDS", "IMPLEMENTS", "OVERRIDES", "FIELD_READ", "FIELD_WRITE", "ANNOTATION" ]
+          },
+          "confidence" : {
+            "type" : "string",
+            "enum" : [ "EXACT", "RECOVERED", "NAME_ONLY" ]
+          },
+          "level" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "viaDispatch" : {
+            "type" : "boolean"
+          },
+          "moduleId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "repository" : {
+            "$ref" : "#/components/schemas/RepositoryRef"
+          },
+          "modulePath" : {
+            "type" : "string"
+          },
+          "filePath" : {
+            "type" : "string"
+          },
+          "line" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "column" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "snippet" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ImpactNode" : {
+        "type" : "object",
+        "properties" : {
+          "symbolId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string",
+            "enum" : [ "CLASS", "INTERFACE", "ENUM", "RECORD", "ANNOTATION_TYPE", "METHOD", "CONSTRUCTOR", "FIELD" ]
+          },
+          "display" : {
+            "type" : "string"
+          },
+          "level" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "SEED", "AFFECTED", "DISPATCH", "TWIN" ]
+          },
+          "confidence" : {
+            "type" : "string",
+            "enum" : [ "EXACT", "RECOVERED", "NAME_ONLY" ]
+          },
+          "nameOnly" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ImpactResult" : {
+        "type" : "object",
+        "properties" : {
+          "summary" : {
+            "$ref" : "#/components/schemas/ImpactSummary"
+          },
+          "nodes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ImpactNode"
+            }
+          },
+          "edges" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ImpactEdge"
+            }
+          },
+          "entryPoints" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/EntryPoint"
+            }
+          },
+          "staleness" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RepoState"
+            }
+          },
+          "versionWarnings" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/VersionWarning"
+            }
+          },
+          "truncated" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ImpactSummary" : {
+        "type" : "object",
+        "properties" : {
+          "repositories" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "modules" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "classes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "methods" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "usages" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "usagesByLevel" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "usagesByConfidence" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "nodesByConfidence" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "partialClasspathRepositories" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RepositoryRef"
+            }
+          }
+        }
+      },
+      "RepoState" : {
+        "type" : "object",
+        "properties" : {
+          "moduleId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "repositoryId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "projectKey" : {
+            "type" : "string"
+          },
+          "repository" : {
+            "type" : "string"
+          },
+          "modulePath" : {
+            "type" : "string"
+          },
+          "classpathMode" : {
+            "type" : "string"
+          },
+          "lastIndexedCommit" : {
+            "type" : "string"
+          },
+          "lastIndexedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "RepositoryRef" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "projectKey" : {
+            "type" : "string"
+          },
+          "slug" : {
+            "type" : "string"
+          }
+        }
+      },
+      "VersionWarning" : {
+        "type" : "object",
+        "properties" : {
+          "repository" : {
+            "$ref" : "#/components/schemas/RepositoryRef"
+          },
+          "modulePath" : {
+            "type" : "string"
+          },
+          "dependency" : {
+            "type" : "string"
+          },
+          "usedVersion" : {
+            "type" : "string"
+          },
+          "declaredVersion" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Credentials" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Me" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "USER" ]
+          },
+          "source" : {
+            "type" : "string",
+            "enum" : [ "LOCAL", "LDAP" ]
+          },
+          "mustChangePassword" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "mustChangePassword", "role", "username" ]
+      },
+      "PasswordChange" : {
+        "type" : "object",
+        "properties" : {
+          "currentPassword" : {
+            "type" : "string"
+          },
+          "newPassword" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Registration" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string",
+            "enum" : [ "ADMIN", "USER" ]
+          }
+        }
+      },
+      "UiConfig" : {
+        "type" : "object",
+        "properties" : {
+          "pageDefaultSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "pageMaxSize" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "graphMaxNodes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "impactDefaultDepth" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "impactMaxDepth" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "pollIntervalMillis" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        },
+        "required" : [ "graphMaxNodes", "impactDefaultDepth", "impactMaxDepth", "pageDefaultSize", "pageMaxSize", "pollIntervalMillis" ]
+      },
+      "DeclarationView" : {
+        "type" : "object",
+        "properties" : {
+          "repository" : {
+            "$ref" : "#/components/schemas/RepositoryRef"
+          },
+          "modulePath" : {
+            "type" : "string"
+          },
+          "filePath" : {
+            "type" : "string"
+          },
+          "line" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "SymbolDetail" : {
+        "type" : "object",
+        "properties" : {
+          "symbol" : {
+            "$ref" : "#/components/schemas/SymbolRef"
+          },
+          "origin" : {
+            "type" : "string",
+            "enum" : [ "SOURCE", "BINARY" ]
+          },
+          "nameOnly" : {
+            "type" : "boolean"
+          },
+          "parent" : {
+            "$ref" : "#/components/schemas/SymbolRef"
+          },
+          "declarations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DeclarationView"
+            }
+          },
+          "members" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SymbolRef"
+            }
+          },
+          "overrides" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SymbolRef"
+            }
+          },
+          "overriddenBy" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SymbolRef"
+            }
+          },
+          "supertypes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SymbolRef"
+            }
+          },
+          "subtypes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SymbolRef"
+            }
+          }
+        }
+      },
+      "SymbolRef" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string",
+            "enum" : [ "CLASS", "INTERFACE", "ENUM", "RECORD", "ANNOTATION_TYPE", "METHOD", "CONSTRUCTOR", "FIELD" ]
+          },
+          "display" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PageUsageView" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UsageView"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "UsageView" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "from" : {
+            "$ref" : "#/components/schemas/SymbolRef"
+          },
+          "kind" : {
+            "type" : "string",
+            "enum" : [ "CALL", "INSTANTIATION", "METHOD_REF", "TYPE_REF", "EXTENDS", "IMPLEMENTS", "OVERRIDES", "FIELD_READ", "FIELD_WRITE", "ANNOTATION" ]
+          },
+          "confidence" : {
+            "type" : "string",
+            "enum" : [ "EXACT", "RECOVERED", "NAME_ONLY" ]
+          },
+          "repository" : {
+            "$ref" : "#/components/schemas/RepositoryRef"
+          },
+          "modulePath" : {
+            "type" : "string"
+          },
+          "filePath" : {
+            "type" : "string"
+          },
+          "line" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "column" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "snippet" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ClassUsage" : {
+        "type" : "object",
+        "properties" : {
+          "classFqn" : {
+            "type" : "string"
+          },
+          "usages" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "ModuleUsage" : {
+        "type" : "object",
+        "properties" : {
+          "modulePath" : {
+            "type" : "string"
+          },
+          "usages" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "classes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ClassUsage"
+            }
+          }
+        }
+      },
+      "RepositoryUsage" : {
+        "type" : "object",
+        "properties" : {
+          "repository" : {
+            "$ref" : "#/components/schemas/RepositoryRef"
+          },
+          "usages" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "modules" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ModuleUsage"
+            }
+          }
+        }
+      },
+      "UsageSummary" : {
+        "type" : "object",
+        "properties" : {
+          "usages" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "repositories" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "byRepository" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RepositoryUsage"
+            }
+          }
+        }
+      },
+      "PageSymbolHit" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SymbolHit"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "SymbolHit" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "key" : {
+            "type" : "string"
+          },
+          "kind" : {
+            "type" : "string",
+            "enum" : [ "CLASS", "INTERFACE", "ENUM", "RECORD", "ANNOTATION_TYPE", "METHOD", "CONSTRUCTOR", "FIELD" ]
+          },
+          "display" : {
+            "type" : "string"
+          },
+          "origin" : {
+            "type" : "string",
+            "enum" : [ "SOURCE", "BINARY" ]
+          },
+          "nameOnly" : {
+            "type" : "boolean"
+          },
+          "usageCount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "repositoryCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PageRepositorySummary" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RepositorySummary"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "RepositorySummary" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "projectKey" : {
+            "type" : "string"
+          },
+          "slug" : {
+            "type" : "string"
+          },
+          "defaultBranch" : {
+            "type" : "string"
+          },
+          "lastIndexedCommit" : {
+            "type" : "string"
+          },
+          "lastIndexedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "lastStatus" : {
+            "type" : "string"
+          },
+          "active" : {
+            "type" : "boolean"
+          },
+          "moduleCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ModuleView" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "path" : {
+            "type" : "string"
+          },
+          "groupId" : {
+            "type" : "string"
+          },
+          "artifactId" : {
+            "type" : "string"
+          },
+          "version" : {
+            "type" : "string"
+          },
+          "classpathMode" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RepositoryDetail" : {
+        "type" : "object",
+        "properties" : {
+          "repository" : {
+            "$ref" : "#/components/schemas/RepositorySummary"
+          },
+          "modules" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ModuleView"
+            }
+          }
+        }
+      },
+      "IndexRunRepoView" : {
+        "type" : "object",
+        "properties" : {
+          "runId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "repository" : {
+            "$ref" : "#/components/schemas/RepositoryRef"
+          },
+          "commit" : {
+            "type" : "string"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "classpathMode" : {
+            "type" : "string"
+          },
+          "error" : {
+            "type" : "string"
+          },
+          "symbolCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "usageCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "warningCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "durationMs" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "finishedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "artifactInstall" : {
+            "type" : "string"
+          },
+          "artifactInstallError" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PageIndexRunRepoView" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IndexRunRepoView"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "ClassMetrics" : {
+        "type" : "object",
+        "properties" : {
+          "inDegree" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "outDegree" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dependents" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "entryPoint" : {
+            "type" : "boolean"
+          },
+          "communityId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "communityLabel" : {
+            "type" : "string"
+          }
+        }
+      },
+      "GraphEdge" : {
+        "type" : "object",
+        "properties" : {
+          "from" : {
+            "type" : "string"
+          },
+          "to" : {
+            "type" : "string"
+          },
+          "weight" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "kinds" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          }
+        }
+      },
+      "GraphNode" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "MODULE", "PACKAGE", "CLASS", "METHOD", "CONSTRUCTOR", "FIELD", "EXTERNAL_REPOSITORY", "EXTERNAL_LIBRARY" ]
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "metrics" : {
+            "$ref" : "#/components/schemas/ClassMetrics"
+          }
+        }
+      },
+      "RepoGraph" : {
+        "type" : "object",
+        "properties" : {
+          "repositoryId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "requestedLevel" : {
+            "type" : "string",
+            "enum" : [ "MODULE", "PACKAGE", "CLASS", "METHOD" ]
+          },
+          "level" : {
+            "type" : "string",
+            "enum" : [ "MODULE", "PACKAGE", "CLASS", "METHOD" ]
+          },
+          "focus" : {
+            "type" : "string"
+          },
+          "truncated" : {
+            "type" : "boolean"
+          },
+          "suggestion" : {
+            "type" : "string"
+          },
+          "nodes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/GraphNode"
+            }
+          },
+          "edges" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/GraphEdge"
+            }
+          }
+        }
+      },
+      "CommunitySummary" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "CriticalClass" : {
+        "type" : "object",
+        "properties" : {
+          "symbolId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "fqn" : {
+            "type" : "string"
+          },
+          "inDegree" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "outDegree" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dependents" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "entryPoint" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PackageCycle" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "packages" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "RepoGraphReport" : {
+        "type" : "object",
+        "properties" : {
+          "repositoryId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "indexedCommit" : {
+            "type" : "string"
+          },
+          "analyzedCommit" : {
+            "type" : "string"
+          },
+          "analyzedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "stale" : {
+            "type" : "boolean"
+          },
+          "moduleCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "packageCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "classCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dependencyCount" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "communityCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "criticalClasses" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CriticalClass"
+            }
+          },
+          "communities" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CommunitySummary"
+            }
+          },
+          "cycles" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PackageCycle"
+            }
+          },
+          "entryPointCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "entryPointClasses" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "IndexRunSummary" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "trigger" : {
+            "type" : "string"
+          },
+          "scope" : {
+            "type" : "string"
+          },
+          "scopeId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "status" : {
+            "type" : "string"
+          },
+          "startedBy" : {
+            "type" : "string"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "finishedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "cancelRequested" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PageIndexRunSummary" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IndexRunSummary"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "IndexRunView" : {
+        "type" : "object",
+        "properties" : {
+          "run" : {
+            "$ref" : "#/components/schemas/IndexRunSummary"
+          },
+          "error" : {
+            "type" : "string"
+          },
+          "repositoriesByStatus" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          },
+          "repositories" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/IndexRunRepoView"
+            }
+          },
+          "inProgress" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RepositoryRef"
+            }
+          }
+        }
+      },
+      "CsrfToken" : {
+        "type" : "object",
+        "properties" : {
+          "headerName" : {
+            "type" : "string"
+          },
+          "token" : {
+            "type" : "string"
+          },
+          "parameterName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CsrfView" : {
+        "type" : "object",
+        "properties" : {
+          "headerName" : {
+            "type" : "string"
+          },
+          "token" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PageAppUser" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AppUser"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "DirectoryUserView" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "appUserId" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "AuditEntry" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "actor" : {
+            "type" : "string"
+          },
+          "action" : {
+            "type" : "string"
+          },
+          "target" : {
+            "type" : "string"
+          },
+          "details" : {
+            "type" : "string"
+          },
+          "at" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "PageAuditEntry" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AuditEntry"
+            }
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      }
+    }
+  }
+}
