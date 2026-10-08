@@ -291,8 +291,99 @@ Bu komut:
 
 Parametrelerin anlamı:
 
-- **`-DskipTests`:** Testleri atlar. Testler Docker üzerinde ayrı bir Oracle başlattığı için uzun sürer; kurulum için gerekmez.
+- **`-DskipTests`:** Java testlerini atlar. Bu testler Docker üzerinde ayrı bir Oracle başlattığı için uzun sürer; kurulum için gerekmez. Web arayüzünün kendi testleri (aşağıdaki 4. madde) yine çalışır.
 - **`-Dfrontend.node.downloadRoot` ve `-Dfrontend.npm.registry`:** Node.js'in ve npm paketlerinin indirileceği adresler. Şirket ağında internete doğrudan çıkış yoksa bunların yerine şirketinizin iç mirror adreslerini yazın. `downloadRoot` adresi `/` ile **bitmeli**, `npm.registry` adresi `/` ile **bitmemelidir**.
+
+### 4.1 Derleme sırasında neler oluyor?
+
+Bu bölüm derlemeyi çalıştırmak için gerekli değil. Derleme bir hata verdiğinde ya da kurumsal ağa göre ayarlamanız gerektiğinde işinize yarar.
+
+#### `mvnw` (Maven Wrapper)
+
+`./mvnw` (Windows'ta `mvnw.cmd`), bilgisayarınıza Maven kurmadan projeyi derlemenizi sağlar ve herkesin **aynı Maven sürümüyle** derlemesini garanti eder. Bu iki dosya, Apache Maven projesinin resmi Maven Wrapper script'leridir; elle değiştirilmez.
+
+1. Hangi Maven'ın kullanılacağını `.mvn/wrapper/maven-wrapper.properties` dosyasından okur. Bu projede Maven 3.9.16'dır:
+
+   ```properties
+   distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip
+   ```
+
+2. O sürüm `~/.m2/wrapper/dists/` altında yoksa indirip açar. İndirme yalnızca ilk seferde olur.
+3. İndirdiği Maven'ı, sizin verdiğiniz parametrelerle (`package`, `-DskipTests`, …) çalıştırır.
+
+Bilgisayarınızda kurulu bir Maven varsa derlemeye etkisi yoktur; derleme her zaman 3.9.16 ile yapılır.
+
+Kurumsal ağ için ayarlanabilenler:
+
+| Ortam değişkeni | Ne işe yarar |
+|---|---|
+| `MVNW_REPOURL` | Maven zip'ini `repo.maven.apache.org` yerine kurum içi bir mirror'dan (Nexus, Artifactory) indirir |
+| `MVNW_USERNAME`, `MVNW_PASSWORD` | O mirror kullanıcı adı ve şifre istiyorsa |
+| `MVNW_VERBOSE=true` | Ne yaptığını ekrana yazar (sorun ararken) |
+
+#### Web arayüzü WAR'ın içine nasıl giriyor?
+
+Komuttaki `-D` parametreleri Maven'a birer özellik olarak verilir. `pom.xml` bunları `${frontend.node.downloadRoot}` ve `${frontend.npm.registry}` olarak okur. İkisinin de `pom.xml`'de varsayılan değeri yoktur; adresler her ağa göre değiştiği için bilerek boş bırakılmıştır.
+
+`./mvnw package`, Maven'ın aşamalarını sırayla çalıştırır. Web arayüzü, paketlemeden hemen önceki `prepare-package` aşamasında derlenir:
+
+```
+compile          → Java kodu derlenir
+test             → Java testleri (-DskipTests ile atlanır)
+prepare-package  → web arayüzü burada derlenir:
+   1. Kontrol:        iki adres verilmiş ve biçimleri doğru mu? (maven-enforcer-plugin)
+   2. Node.js ve npm: target/node/ altına indirilir (Node v24.21.0, npm 11.21.0)
+   3. npm ci:         frontend/package-lock.json'daki paketler npm deposundan indirilir
+   4. npm test:       arayüzün tip kontrolü, lint ve testleri
+   5. npm run build:  React uygulaması frontend/dist/ altına derlenir
+   6. Kopyalama:      önceki arayüz silinir, frontend/dist/ → target/classes/static/
+package          → her şey WAR'a konur; arayüz WEB-INF/classes/static/ altına düşer
+```
+
+2–5 arasındaki adımları `pom.xml`'deki **frontend-maven-plugin** yapar. Node.js ve npm sürümleri `pom.xml`'de sabittir; bu yüzden bilgisayarda Node.js kurulu olması gerekmez. İndirilen Node.js yalnızca projenin `target/node/` klasöründe durur.
+
+Parametreler eklentide şu yerlere gider:
+
+| Parametre | Ne için kullanılır |
+|---|---|
+| `frontend.node.downloadRoot` | Node.js'in indirileceği adres; arkasına sürüm klasörü eklenir (örn. `…/v24.21.0/node-v24.21.0-linux-x64.tar.gz`). Bu yüzden `/` ile bitmelidir. |
+| `frontend.npm.registry` | `npm ci`'nin paketleri indireceği npm deposu. Aynı adresin arkasına `/npm/-/` eklenerek npm'in kendisi de buradan indirilir; bu yüzden `/` ile bitmemelidir. |
+
+Adreslerden biri eksik ya da yanlış biçimdeyse 1. adımdaki kontrol, derlemeyi en başta anlaşılır bir mesajla durdurur.
+
+#### Adresleri her seferinde yazmamak için
+
+Adresleri kalıcı olarak `~/.m2/settings.xml` dosyasına koyabilirsiniz. Dosya yoksa oluşturun:
+
+```xml
+<settings>
+  <profiles>
+    <profile>
+      <id>graphify-mirrors</id>
+      <activation><activeByDefault>true</activeByDefault></activation>
+      <properties>
+        <frontend.node.downloadRoot>https://nodejs.org/dist/</frontend.node.downloadRoot>
+        <frontend.npm.registry>https://registry.npmjs.org</frontend.npm.registry>
+      </properties>
+    </profile>
+  </profiles>
+</settings>
+```
+
+Bundan sonra yalnızca şu komut yeterlidir:
+
+```bash
+./mvnw -DskipTests package
+```
+
+Kurum içi mirror kullanıcı adı ve şifre istiyorsa, bu bilgileri projeye **yazmayın**:
+
+- **npm deposu için:** kullanıcı klasörünüzdeki `~/.npmrc` dosyasına bir token satırı ekleyin, örn. `//registry.sirket.com/repository/npm/:_authToken=${NPM_TOKEN}`. Token'ın kendisi `NPM_TOKEN` ortam değişkeninde durur.
+- **Node.js mirror'ı için:** `~/.m2/settings.xml` içinde bir `<server>` tanımlayın ve profilin `properties` bölümüne `<frontend.node.serverId>` olarak onun `id`'sini yazın.
+
+#### Arayüzsüz derleme
+
+`-Dfrontend.skip=true` ile web arayüzü hiç derlenmez; iki adrese de gerek kalmaz. Ortaya çıkan WAR yalnızca API'yi içerir. Kullanıcıların kullanacağı WAR için **kullanmayın**.
 
 ---
 
