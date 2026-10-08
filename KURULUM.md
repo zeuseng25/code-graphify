@@ -769,6 +769,7 @@ Her sorunda ilk bakılacak yer **`WILDFLY_HOME/standalone/log/server.log`** dosy
 | Derleme `JDK 25 is required` ile duruyor | `java -version` 25 değil. `JAVA_HOME`'u JDK 25'e yöneltin (1. adım). |
 | Derleme `Set -Dfrontend.node.downloadRoot ...` ile duruyor | 4. adımdaki iki `-Dfrontend...` parametresini eklemeyi unuttunuz. |
 | Derleme Node.js ya da npm indirirken hata veriyor | Sunucunun internete erişimi yok. Şirketinizin iç mirror adreslerini kullanın (4. adım). |
+| Derlemede `[ERROR] (!) Some chunks are larger than 500 kB after minification` | Hata değil, Vite'ın bir **uyarısı**; görmezden gelebilirsiniz. Web arayüzünün ana JavaScript dosyası 500 KB'tan büyük olduğu için yazılır. Vite uyarılarını hata çıkışına yazdığı için Maven log'unda `[ERROR]` etiketiyle görünür. Hemen altında `✓ built in …` ve komutun sonunda `BUILD SUCCESS` görüyorsanız WAR sorunsuz oluşmuştur. |
 | `graphify.war.failed` dosyası oluştu | `server.log`'da hatayı arayın. En sık nedenler: ortam değişkenleri eksik ya da yanlış (6. adım), veritabanına ulaşılamıyor, WildFly JDK 25 ile çalışmıyor. |
 | Log'da `ORA-12541` / `ORA-12514` / `Connection refused` | Oracle çalışmıyor ya da `DB_URL` yanlış. `docker ps` ile container'ı kontrol edin; Docker'ı yeni başlattıysanız `DATABASE IS READY TO USE!` satırını bekleyin. |
 | Log'da `ORA-01017` | `DB_USER` ya da `DB_PASSWORD` yanlış. |
